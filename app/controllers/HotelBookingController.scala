@@ -1,6 +1,7 @@
 package controllers
 
 import java.text.SimpleDateFormat
+import java.util.Date
 import javax.inject.{Inject, Singleton}
 
 import actors.BookingSystemActor
@@ -13,6 +14,7 @@ import akka.util.Timeout
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.concurrent.{Await, ExecutionContext, Future, Promise}
+import akka.pattern.ask
 
 //@Singleton
 //class HotelBookingController @Inject()(cc: ControllerComponents, actorSystem: ActorSystem)(implicit exec: ExecutionContext) extends AbstractController(cc) {
@@ -50,6 +52,16 @@ class HotelBookingController @Inject()(cc: ControllerComponents, actorSystem: Ac
     */
   def message = Action.async {
     getFutureMessage(1.second).map { msg => Ok(msg) }
+  }
+
+
+  def availableRooms(d: String) = Action.async {
+    val date = new SimpleDateFormat("yyyy-MM-dd").parse("2018-06-14")
+    getAvailableRoomDetails(date)
+  }
+
+  def getAvailableRoomDetails(date: Date): Future[Result] = {
+    ask(bookingManagerActor, GetAvailableRooms(date)).mapTo[Result]
   }
 
   private def getFutureMessage(delayTime: FiniteDuration): Future[String] = {
