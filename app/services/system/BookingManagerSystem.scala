@@ -2,6 +2,8 @@ package services.system
 
 import java.util.Date
 
+import exceptions.{NoRoomsAvailableException, RoomNotAvailableException}
+
 import scala.collection.concurrent
 
 
